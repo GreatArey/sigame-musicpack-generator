@@ -21,7 +21,7 @@ Run
 python src/main.py
 ```
 ### Params description
-- Source directory: stores unprocessed tracks in mp3 format
+- Source directory: stores unprocessed tracks in mp3 format. Track names should be the answer
 - Tracks found: track count in source directory
 - Target directory: stores trimmed tracks and the output yaml file
 - Number of rounds: that's literally what it is
@@ -32,3 +32,6 @@ python src/main.py
   - Fixed interval (seconds from/to): cut a part from N seconds to M seconds for all tracks
   - Center part (length in seconds): cut a part center of all tracks
 - Status: displays the current status
+
+### Output
+After the program completes, the ``` pack.yaml ``` file will be created in the target directory. Then open SiQuester → import → YAML-file → select ``` pack.yaml ```. Fill in the package data. Done!
