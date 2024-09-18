@@ -21,58 +21,58 @@ class MyWindow(QWidget):
         self.msg = QMessageBox()
 
         # Поля для выбора директорий
-        source_dir_label = QLabel('Исходная папка:', self)
+        source_dir_label = QLabel('Source directory:', self)
         self.source_dir_edit = QLineEdit(self)
-        source_dir_button = QPushButton('Выбрать', self)
+        source_dir_button = QPushButton('Choose', self)
         source_dir_button.clicked.connect(self.select_source_directory)
 
-        found_tracks_text = QLabel("Найдено треков:", self)
+        found_tracks_text = QLabel("Tracks found:", self)
         self.found_tracks = QLineEdit(self)
         self.found_tracks.setText("0")
         self.found_tracks.setReadOnly(True)
 
-        target_dir_label = QLabel('Конечная папка:', self)
+        target_dir_label = QLabel('Target directory:', self)
         self.target_dir_edit = QLineEdit(self)
-        target_dir_button = QPushButton('Выбрать', self)
+        target_dir_button = QPushButton('Choose', self)
         target_dir_button.clicked.connect(self.select_target_directory)
 
         # Поля для ввода целых чисел с произвольными надписями
-        int_label1 = QLabel('Количество раундов:', self)
+        int_label1 = QLabel('Number of rounds:', self)
         self.round_count = QSpinBox(self)
         self.round_count.setMinimum(1)
         self.round_count.setMaximum(10)
         self.round_count.valueChanged.connect(self.update_params)
 
-        int_label2 = QLabel('Количество тем в раунде:', self)
+        int_label2 = QLabel('Number of topics per round:', self)
         self.theme_count = QSpinBox(self)
         self.theme_count.setMinimum(1)
-        self.theme_count.setMaximum(10)
+        self.theme_count.setMaximum(20)
         self.theme_count.valueChanged.connect(self.update_params)
 
-        int_label3 = QLabel('Количество вопросов в теме:', self)
+        int_label3 = QLabel('Number of questions in the topic', self)
         self.qs_count = QSpinBox(self)
         self.qs_count.setMinimum(1)
         self.qs_count.setMaximum(10)
         self.qs_count.valueChanged.connect(self.update_params)
 
         # Поле для вывода текста
-        need_music_text = QLabel('Требуемое количество треков:', self)
+        need_music_text = QLabel('Required number of tracks:', self)
         self.need_music = QLineEdit(self)
         self.need_music.setText("1")
         self.need_music.setReadOnly(True)
 
         # Переключатель между вариантами "кастомный промежуток" и "центральная часть"
-        self.custom_radio = QRadioButton('Кастомный промежуток в секундах', self)
+        self.custom_radio = QRadioButton('Fixed interval (seconds from/to)', self)
         self.custom_radio.setChecked(True)
         self.custom_radio.toggled.connect(self.on_radio_toggled)
 
-        self.central_radio = QRadioButton('Центральная часть в секундах', self)
+        self.central_radio = QRadioButton('Center part (length in seconds)', self)
         self.central_radio.toggled.connect(self.on_radio_toggled)
 
         # Поля для ввода целых чисел, связанные с переключателем
         self.custom_or_center = True
-        self._from = QLabel("От:", self)
-        self._to = QLabel("До:", self)
+        self._from = QLabel("From:", self)
+        self._to = QLabel("To:", self)
         self.from_edit = QSpinBox(self)
         self.to_edit = QSpinBox(self)
         self.from_edit.setMinimum(0)
@@ -86,12 +86,12 @@ class MyWindow(QWidget):
         self.central_int_edit.hide()
 
         # Кнопка "Создать"
-        self.create_button = QPushButton('Создать', self)
+        self.create_button = QPushButton('Generate', self)
         self.create_button.clicked.connect(self.create_output_text)
 
-        status = QLabel("Статус", self)
+        status = QLabel("Status", self)
         self.status_field = QLineEdit()
-        self.status_field.setText("Настройка")
+        self.status_field.setText("Customization")
         self.status_field.setReadOnly(True)
 
         self.pbar1 = QProgressBar(self)
@@ -134,7 +134,7 @@ class MyWindow(QWidget):
         radio_layout.addWidget(self.central_radio, 3, 0, 1, 2)
         radio_layout.addWidget(self.central_int_edit, 4, 0)
 
-        group_box = QGroupBox('Выбор варианта')
+        group_box = QGroupBox('Choice of option')
         group_box.setLayout(radio_layout)
 
         layout.addWidget(group_box, 10, 0)
@@ -150,13 +150,13 @@ class MyWindow(QWidget):
         self.setLayout(layout)
 
     def select_source_directory(self):
-        directory = QFileDialog.getExistingDirectory(self, 'Выберите исходную папку')
+        directory = QFileDialog.getExistingDirectory(self, 'Select the source directory')
         self.source_dir_edit.setText(directory)
         file_list = [f for f in os.listdir(directory) if f.endswith("mp3")]
         self.found_tracks.setText(str(len(file_list)))
 
     def select_target_directory(self):
-        directory = QFileDialog.getExistingDirectory(self, 'Выберите конечную папку')
+        directory = QFileDialog.getExistingDirectory(self, 'Select the target directory')
         self.target_dir_edit.setText(directory)
 
     def on_radio_toggled(self):
@@ -176,26 +176,26 @@ class MyWindow(QWidget):
             self.central_int_edit.show()
 
     def create_output_text(self):
-        self.status_field.setText("Проверка настроек.")
+        self.status_field.setText("Check settings...")
         if self.source_dir_edit.text() == '' or self.target_dir_edit.text() == '':
             self.msg.setIcon(QMessageBox.Critical)
-            self.msg.setText("Не указаны директории")
-            self.msg.setInformativeText("Начальная или конечная директории не указаны!!!")
-            self.msg.setWindowTitle("Ошибка")
+            self.msg.setText("No directories specified!")
+            self.msg.setInformativeText("No source or target directory is specified!!!")
+            self.msg.setWindowTitle("Error")
             self.msg.setStandardButtons(QMessageBox.Ok)
 
             self.msg.exec_()
-            self.status_field.setText("Настройка")
+            self.status_field.setText("Customization")
             return
         if int(self.found_tracks.text()) < int(self.need_music.text()):
             self.msg.setIcon(QMessageBox.Critical)
-            self.msg.setText("Мало песенок")
-            self.msg.setInformativeText("С указанной исходной директории слишком мало треков!!!")
-            self.msg.setWindowTitle("Ошибка")
+            self.msg.setText("Not enough tracks")
+            self.msg.setInformativeText("There are too few tracks in the specified source directory!!!")
+            self.msg.setWindowTitle("Error")
             self.msg.setStandardButtons(QMessageBox.Ok)
 
             self.msg.exec_()
-            self.status_field.setText("Настройка")
+            self.status_field.setText("Customization")
             return
 
         source_directory = self.source_dir_edit.text()
@@ -213,15 +213,15 @@ class MyWindow(QWidget):
 
         if length > 30:
             self.msg.setIcon(QMessageBox.Warning)
-            self.msg.setText("Слишком длинно")
-            self.msg.setInformativeText("Выбран слишком большой промежуток это может сказаться на размере пакета!!!")
-            self.msg.setWindowTitle("Внимание")
+            self.msg.setText("It's too long")
+            self.msg.setInformativeText("Too large a gap has been selected, this may affect the package size!!!!")
+            self.msg.setWindowTitle("Warning")
             self.msg.setStandardButtons(QMessageBox.Ok)
 
             self.msg.exec_()
 
         self.create_button.setDisabled(True)
-        self.status_field.setText("Обработка музыки..")
+        self.status_field.setText("Music processing...")
 
         # self.thread = QtCore.QThread()
         self.editor.source_directory = source_directory
@@ -251,9 +251,9 @@ class MyWindow(QWidget):
         self.pbar1.setValue(int(msg))
 
     def uploading(self):
-        self.status_field.setText("Упаковка в пакет...")
+        self.status_field.setText("Packaging...")
 
     def on_finish(self):
-        self.status_field.setText("Готово!!!")
+        self.status_field.setText("Done!!!")
         self.pbar1.setValue(0)
         self.create_button.setEnabled(True)
